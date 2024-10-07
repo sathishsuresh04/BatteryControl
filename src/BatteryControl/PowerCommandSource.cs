@@ -14,7 +14,6 @@ public class PowerCommandSource
     {
         _ = RunGenerator();
     }
-
     /// <summary>
     /// Set a callback to your code to handle the currently requested power. 
     /// </summary>
@@ -24,7 +23,7 @@ public class PowerCommandSource
     private async Task RunGenerator()
     {
         var generatorType = Random.Shared.Next(0, 2);
-        Func<int, int> generator = generatorType switch
+        var generator = generatorType switch
         {
             1 => _sineGenerator,
             _ => _squareGenerator
@@ -41,8 +40,8 @@ public class PowerCommandSource
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine("PowerCommandSource failed, it shouldn't");
-                Console.Error.WriteLine(ex.ToString());
+                 await Console.Error.WriteLineAsync("PowerCommandSource failed, it shouldn't");
+                 await Console.Error.WriteLineAsync(ex.ToString());
                 Environment.Exit(1);
             }
         }

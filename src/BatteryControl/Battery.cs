@@ -2,20 +2,22 @@ namespace BatteryControl;
 
 public class Battery
 {
-    private int _currentPower = 0;
+    private int _currentPower;
     private bool _isBusy;
     private double _batteryPercent = 50;
+    
+    public virtual int MaxChargePower { get; }
+    public virtual int MaxDischargePower { get; }
 
-    public readonly int MaxChargePower;
-    public readonly int MaxDischargePower;
 
     public Battery()
     {
-        MaxChargePower = (int)Random.Shared.Next(100, 110);
-        MaxDischargePower = (int)Random.Shared.Next(100, 110);
+        MaxChargePower = Random.Shared.Next(100, 110);
+        MaxDischargePower = Random.Shared.Next(100, 110);
 
         _ = UpdateSoC();
     }
+    
 
     /// <summary>
     /// Sets the battery to charge (positive values) or discharge (negative values).
@@ -23,17 +25,11 @@ public class Battery
     /// <param name="newPower">How many watts the battery should charge/discharge</param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    public async Task SetNewPower(int newPower)
+    public  virtual async Task SetNewPower(int newPower)
     {
-        if (newPower > MaxChargePower)
-        {
-            throw new ArgumentOutOfRangeException(nameof(newPower));
-        }
-        
-        if (newPower < -MaxDischargePower)
-        {
-            throw new ArgumentOutOfRangeException(nameof(newPower));
-        }
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(newPower, MaxChargePower);
+
+        ArgumentOutOfRangeException.ThrowIfLessThan(newPower, -MaxDischargePower);
 
         if (_isBusy)
         {
@@ -50,28 +46,27 @@ public class Battery
     /// Returns the current amount of watts the battery charges/dischages.
     /// </summary>
     /// <returns></returns>
-    public int GetCurrentPower()
+    public virtual int GetCurrentPower()
     {
-        if (_currentPower > 0 && _batteryPercent >= 100)
+        switch (_currentPower)
         {
-            return 0;
+            case > 0 when _batteryPercent >= 100:
+            case < 0 when _batteryPercent <= 0:
+                return 0;
+            default:
+                return _currentPower;
         }
-        if (_currentPower < 0 && _batteryPercent <= 0)
-        {
-            return 0;
-        }
-        return _currentPower;
     }
 
     //You may uncomment this line if you need it.
-    //public bool IsBusy() => _isBusy;
+    public  virtual bool IsBusy() => _isBusy;
 
     /// <summary>
     /// Returns how much the battery is charged. If it is 0% the battery is empty, and 100% it's full.
     /// If the battery is empty, it cannot discharge more. And if it's 100% it cannot charge more.
     /// </summary>
     /// <returns>The percentage of charge the battery can have.</returns>
-    public int GetBatteryPercent()
+    public  virtual int GetBatteryPercent()
     {
         return (int)_batteryPercent;
     }
@@ -80,15 +75,15 @@ public class Battery
     {
         while (true)
         {
-            if (_currentPower > 0 && _batteryPercent < 100)
+            switch (_currentPower)
             {
-                //Charge is not symetric with discharge
-                _batteryPercent += (double)_currentPower / 1200; 
-            }
-            
-            if (_currentPower < 0 && _batteryPercent > 0)
-            {
-                _batteryPercent += (double)_currentPower / 1000;
+                case > 0 when _batteryPercent < 100:
+                    //Charge is not symetric with discharge
+                    _batteryPercent += (double)_currentPower / 1200;
+                    break;
+                case < 0 when _batteryPercent > 0:
+                    _batteryPercent += (double)_currentPower / 1000;
+                    break;
             }
 
             await Task.Delay(1000);
