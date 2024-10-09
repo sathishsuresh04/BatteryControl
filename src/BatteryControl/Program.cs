@@ -20,6 +20,7 @@ Console.WriteLine("Starting battery simulator");
 var pool = host.Services.GetRequiredService<IBatteryPool>();
 var source = host.Services.GetRequiredService<PowerCommandSource>();
 var logger = host.Services.GetRequiredService<ICsvLogger>();
+// source.PowerCommandEvent+=async power=>await pool.DistributePowerAsync(power);
 
 source.SetCallback(newPower =>
 {

@@ -29,7 +29,7 @@ namespace BatteryControl.Tests;
         public async Task DistributePowerAsync_ShouldCallStrategyWithCorrectParameters()
         {
             // Arrange
-            int requestedPower = 1000;
+            const int requestedPower = 1000;
 
             // Act
             await _batteryPool.DistributePowerAsync(requestedPower);

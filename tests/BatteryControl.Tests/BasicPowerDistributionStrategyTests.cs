@@ -50,4 +50,18 @@ public class BasicPowerDistributionStrategyTests
         battery.MaxDischargePower.Returns(maxDischargePower);
         battery.IsBusy().Returns(isBusy);
     }
+    [Fact]
+    public async Task DistributePowerAsync_ShouldNotExceedMaxCapacity()
+    {
+        // Arrange
+        var battery = Substitute.For<Battery>();
+        SetupBattery(battery, 50, 100, 100);  // 50% battery; 100 max capacities
+        var batteries = new List<Battery> { battery };
+
+        // Act
+        await _strategy.DistributePowerAsync(batteries, 100);
+
+        // Assert
+        await battery.Received(1).SetNewPower(100);  // No over-allocation beyond max capacity
+    }
 }

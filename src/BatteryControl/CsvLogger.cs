@@ -7,6 +7,17 @@ namespace BatteryControl;
 /// This class monitors the current requested power, and the current output power.
 /// It writes the values every second to a temp file you can read later. 
 /// </summary>
+///
+/// TODO: Replace this with TimeSCALEDB in postgres or DynamoDB in AWS
+/// CREATE TABLE battery_readings (
+// time TIMESTAMPTZ NOT NULL,
+//     battery_id INT NOT NULL,
+//     current_power INT,
+// battery_percent INT,
+//     requested_power INT
+//     );
+//
+// SELECT create_hypertable('battery_readings', 'time');
 internal class CsvLogger: ICsvLogger
 {
     private readonly IBatteryPool _pool;

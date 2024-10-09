@@ -44,6 +44,12 @@ public class BatteryPool: IBatteryPool
             await Task.Delay(1000);
             var currentPower = _pool.Sum(battery => battery.GetCurrentPower());
             Console.WriteLine($"Current set power: {currentPower}");
+            
+            
+            // foreach (var battery in _pool)
+            // {
+            //     Console.WriteLine($"Battery SoC: {battery.GetBatteryPercent()}%, Current Power: {battery.GetCurrentPower()}");
+            // }
         }
     }
 }

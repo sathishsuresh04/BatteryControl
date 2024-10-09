@@ -8,6 +8,7 @@ public class PowerCommandSource
     public int Magnitude { get; private set; }
 
     private Action<int> _callback = _ => { };
+   // public event Action<int>? PowerCommandEvent;
     private const int MaxPower = 1000;
     
     public PowerCommandSource()
@@ -35,6 +36,7 @@ public class PowerCommandSource
             try
             {
                 Magnitude = generator(second);
+              //  PowerCommandEvent?.Invoke(Magnitude);
                 _ = Task.Run(() => _callback.Invoke(Magnitude));
                 Console.WriteLine($"Current requested power: {Magnitude}");
             }

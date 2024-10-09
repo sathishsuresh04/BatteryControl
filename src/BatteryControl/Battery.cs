@@ -78,10 +78,12 @@ public class Battery
             switch (_currentPower)
             {
                 case > 0 when _batteryPercent < 100:
+                    //charge is slower due to energy losses in the form of heat and Charging rates are often limited to prevent overheating and extend battery life.
                     //Charge is not symetric with discharge
                     _batteryPercent += (double)_currentPower / 1200;
                     break;
                 case < 0 when _batteryPercent > 0:
+                    //discharging is faster
                     _batteryPercent += (double)_currentPower / 1000;
                     break;
             }
